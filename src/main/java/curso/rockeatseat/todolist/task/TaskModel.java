@@ -63,4 +63,8 @@ public class TaskModel {
     public void setPriority(String priority) {
         this.priority = priority;
     }
+
+    public UUID getIdUser() {
+        return idUser;
+    }
 }
