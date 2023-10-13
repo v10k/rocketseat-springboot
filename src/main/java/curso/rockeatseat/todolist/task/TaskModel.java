@@ -24,6 +24,9 @@ public class TaskModel {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
+    public UUID getId() {
+        return id;
+    }
     public String getDescription() {
         return description;
     }
