@@ -20,26 +20,30 @@ public class FilterTaskAuth extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-//        Pegar a autenticação (usuário e senha)
-        var authorization = request.getHeader("Authorization").substring("Basic".length()).trim();
-        byte[] authDecode = Base64.getDecoder().decode(authorization);
-        String authString = new String(authDecode);
-        String[] credentials = authString.split(":");
+        var servletPath = request.getServletPath();
+        if (!servletPath.equals("/tasks/")) {
+            filterChain.doFilter(request, response);
+        } else {
+            //            Pegar a autenticação (usuário e senha)
+            var authorization = request.getHeader("Authorization").substring("Basic".length()).trim();
+            byte[] authDecode = Base64.getDecoder().decode(authorization);
+            String authString = new String(authDecode);
+            String[] credentials = authString.split(":");
 
 //        Validar usuário
-        var user = this.userRepository.findByUsername(credentials[0]);
-        if(user == null) {
-            response.sendError(401, "Usuário sem autorização");
-        } else {
-            var passwordVerify = BCrypt.verifyer().verify(credentials[1].toCharArray(), user.getPassword());
-            if (passwordVerify.verified) {
-                filterChain.doFilter(request, response);
+            var user = this.userRepository.findByUsername(credentials[0]);
+            if (user == null) {
+                response.sendError(401, "Usuário sem autorização");
             } else {
-                response.sendError(401);
+                var passwordVerify = BCrypt.verifyer().verify(credentials[1].toCharArray(), user.getPassword());
+                if (passwordVerify.verified) {
+                    request.setAttribute("idUser", user.getUid());
+                    filterChain.doFilter(request, response);
+                } else {
+                    response.sendError(401);
+                }
             }
-        }
 //        Validar senha
-
+        }
     }
-
 }

@@ -67,4 +67,8 @@ public class TaskModel {
     public UUID getIdUser() {
         return idUser;
     }
+
+    public void setIdUser(UUID idUser) {
+        this.idUser = idUser;
+    }
 }
