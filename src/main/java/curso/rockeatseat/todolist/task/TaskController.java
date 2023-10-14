@@ -51,6 +51,6 @@ public class TaskController {
         }
 
         Utils.copyNonNullProperties(taskModel, task);
-        return ResponseEntity.status(HttpStatus.OK).body(this.taskRepository.save(task));
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.taskRepository.save(task));
     }
 }
